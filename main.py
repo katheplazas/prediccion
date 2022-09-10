@@ -56,35 +56,32 @@ def predict_dt():
 
 @app.route('/model/lr', methods=["GET"])
 def predict_lr():
-    if request.method == 'GET':
-        print("here")
-        if request.files:
-            print("here2")
-            data = request.files['data'].read()
-            print(type(data))
-            # type_ml = request.form['type_ml']
-            data = data.decode('utf8')
-            data = json.loads(data)
-            print(f'decode:{data}')
-            print(f'tipo{type(data)}')
-            data = pd.DataFrame.from_dict(data)
-            print(data.head())
-            # data = pre_processing(data)
+    if request.data:
+        print("here2")
+        data = request.data
+        print(type(data))
+        # type_ml = request.form['type_ml']
+        data = data.decode('utf8')
+        data = json.loads(data)
+        print(f'decode:{data}')
+        print(f'tipo{type(data)}')
+        data = pd.DataFrame.from_dict(data)
+        print(data.head())
+        # data = pre_processing(data)
 
-            file = mongo.db.fs.files.find_one({'filename': 'lr'})
-            binary = b""
-            s = mongo.db.fs.chunks.find({'files_id': file['_id']})
-            for i in s:
-                binary += i['data']
-            model = pickle.loads(binary)
-            start = time.time()
-            predict = model.predict(data)
-            end_predict = time.time() - start
-            response = predict.tolist()
-            response.append(end_predict)
-            return response
-        return "no request files"
-    return "no method GET"
+        file = mongo.db.fs.files.find_one({'filename': 'lr'})
+        binary = b""
+        s = mongo.db.fs.chunks.find({'files_id': file['_id']})
+        for i in s:
+            binary += i['data']
+        model = pickle.loads(binary)
+        start = time.time()
+        predict = model.predict(data)
+        end_predict = time.time() - start
+        response = predict.tolist()
+        response.append(end_predict)
+        return response
+    return "no request files"
 
 
 @app.route('/model/rf', methods=["GET"])
