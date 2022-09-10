@@ -56,7 +56,8 @@ def predict_dt():
 
 @app.route('/model/lr', methods=["GET"])
 def predict_lr():
-    print(request)
+    request_data = request.get_json()
+    print(request_data)
     if request.json:
         print("here2")
         data = request.data
