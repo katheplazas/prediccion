@@ -56,7 +56,8 @@ def predict_dt():
 
 @app.route('/model/lr', methods=["GET"])
 def predict_lr():
-    if request.data:
+    print(request)
+    if request.json:
         print("here2")
         data = request.data
         print(type(data))
@@ -81,7 +82,7 @@ def predict_lr():
         response = predict.tolist()
         response.append(end_predict)
         return response
-    return "no request files"
+    return "no request files", 404
 
 
 @app.route('/model/rf', methods=["GET"])
