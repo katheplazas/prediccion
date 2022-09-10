@@ -21,7 +21,7 @@ def prueba():
     return "Conectado Python"
 
 
-@app.route('/prediction/model/dt', methods=["GET"])
+@app.route('/model/dt', methods=["GET"])
 def predict_dt():
     if request.method == 'GET':
         print("here")
@@ -54,7 +54,7 @@ def predict_dt():
     return "no method GET"
 
 
-@app.route('/prediction/model/lr', methods=["GET"])
+@app.route('/model/lr', methods=["GET"])
 def predict_lr():
     if request.method == 'GET':
         print("here")
@@ -87,7 +87,7 @@ def predict_lr():
     return "no method GET"
 
 
-@app.route('/prediction/model/rf', methods=["GET"])
+@app.route('/model/rf', methods=["GET"])
 def predict_rf():
     if request.method == 'GET':
         print("here")
@@ -120,7 +120,7 @@ def predict_rf():
     return "no method GET"
 
 
-@app.route('/prediction/model/svm-linear', methods=["GET"])
+@app.route('/model/svm-linear', methods=["GET"])
 def predict_svm_linear():
     if request.method == 'GET':
         print("here")
@@ -153,7 +153,7 @@ def predict_svm_linear():
     return "no method GET"
 
 
-@app.route('/save/model/dt/', methods=["POST"])
+@app.route('/save/model/dt', methods=["POST"])
 def save_dt():
     if request.method == 'POST':
         if 'model' in request.files:
@@ -176,7 +176,7 @@ def save_dt():
     return not_post
 
 
-@app.route('/save/model/lr/', methods=["POST"])
+@app.route('/save/model/lr', methods=["POST"])
 def save_lr():
     if request.method == 'POST':
         if 'model' in request.files:
@@ -199,7 +199,7 @@ def save_lr():
     return not_post
 
 
-@app.route('/save/model/rf/', methods=["POST"])
+@app.route('/save/model/rf', methods=["POST"])
 def save_rf():
     if request.method == 'POST':
         if 'model' in request.files:
@@ -222,7 +222,7 @@ def save_rf():
     return not_post
 
 
-@app.route('/save/model/svm-linear/', methods=["POST"])
+@app.route('/save/model/svm-linear', methods=["POST"])
 def save_svm_linear():
     if request.method == 'POST':
         if 'model' in request.files:
