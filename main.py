@@ -18,7 +18,7 @@ mongo = PyMongo(app)
 
 @app.route('/prueba', methods=["GET"])
 def prueba():
-    return "Conectado Python"
+    return "Conectado otro microservicio"
 
 
 @app.route('/model/dt', methods=["GET"])
