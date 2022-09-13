@@ -16,13 +16,17 @@ app.config["MONGO_URI"] = 'mongodb://root:123456@mongo:27018/prediccion?authSour
 mongo = PyMongo(app)
 
 
-@app.route('/prueba', methods=["GET"])
-def prueba():
-    return "Conectado otro microservicio"
+@app.route('/prueba', methods=["POST"])
+def prueba(data):
+    if data is not None:
+        print(data)
+    print(f'dato recibido: {request.data.decode()}')
+    return "Conexion"
 
 
 @app.route('/model/dt', methods=["GET"])
 def predict_dt(data):
+
     if request.method == 'GET':
         print(data)
         if request.files:
