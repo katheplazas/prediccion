@@ -55,20 +55,9 @@ def predict_dt():
 
 
 @app.route('/model/lr', methods=["GET"])
-def predict_lr():
-    request_data = request.get_json()
-    print(f'json: {request_data}')
-    request_data = request.get_data()
-    print(f'data: {request_data}')
-    request_data = request.args
-    print(f'args: {request_data}')
-    request_data = request.form
-    print(f'form: {request_data}')
-    request_data = request.values
-    print(f'values: {request_data}')
-    request_data = request.blueprint
-    print(f'blueprint: {request_data}')
-    if request.json:
+def predict_lr(data):
+
+    if data is not None:
         print("here2")
         data = request.data
         print(type(data))
