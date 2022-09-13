@@ -18,6 +18,7 @@ mongo = PyMongo(app)
 
 @app.route('/prueba', methods=["POST"])
 def prueba():
+    print("CONEXION ESTABLECIDA")
     print(f'dato recibido: {request}')
     return "Conexion"
 
@@ -267,5 +268,5 @@ def not_post(error=None):
 
 
 if __name__ == "__main__":
-    # app.run(host='0.0.0.0', port=rest_port)
-    app.run(debug=True, port=rest_port)
+    app.run(host='0.0.0.0', port=rest_port)
+    # app.run(debug=True, port=rest_port)
