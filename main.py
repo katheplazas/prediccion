@@ -267,5 +267,5 @@ def not_post(error=None):
 
 
 if __name__ == "__main__":
-    app.run(host='0.0.0.0', port=rest_port)
-    # app.run(debug=True, port=rest_port)
+    # app.run(host='0.0.0.0', port=rest_port)
+    app.run(debug=True, port=rest_port)
