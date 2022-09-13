@@ -20,7 +20,7 @@ mongo = PyMongo(app)
 def prueba():
     print("CONEXION ESTABLECIDA")
     print(f'dato recibido: {request}')
-    return "Conexion"
+    return "Conexion "+str(request.data)
 
 
 @app.route('/model/dt', methods=["GET"])
