@@ -22,9 +22,9 @@ def prueba():
 
 
 @app.route('/model/dt', methods=["GET"])
-def predict_dt():
+def predict_dt(data):
     if request.method == 'GET':
-        print("here")
+        print(data)
         if request.files:
             print("here2")
             data = request.files['data'].read()
