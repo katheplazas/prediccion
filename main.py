@@ -17,10 +17,8 @@ mongo = PyMongo(app)
 
 
 @app.route('/prueba', methods=["POST"])
-def prueba(data):
-    if data is not None:
-        print(data)
-    print(f'dato recibido: {request.data.decode()}')
+def prueba():
+    print(f'dato recibido: {request}')
     return "Conexion"
 
 
