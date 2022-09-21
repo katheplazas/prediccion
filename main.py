@@ -14,7 +14,7 @@ rest_port = 8061
 
 app = Flask(__name__)
 # app.config["MONGO_URI"] = 'mongodb://root:123456@mongo:27018/prediccion?authSource=admin'
-app.config["MONGO_URI"] = 'mongodb://root:123456@localhost:27017/prediccion?authSource=admin'
+app.config["MONGO_URI"] = 'mongodb://root:123456@localhost:27018/prediccion?authSource=admin'
 mongo = PyMongo(app)
 
 
@@ -24,21 +24,25 @@ def prueba():
 
 
 def predict_dt(data):
-    data = pd.read_json(data)
+    data = pd.DataFrame.from_dict(data)
     print(data.head())
     # data = pre_processing(data)
 
     file = mongo.db.fs.files.find_one({'filename': 'dt'})
+    print("paso file")
     binary = b""
     s = mongo.db.fs.chunks.find({'files_id': file['_id']})
     for i in s:
         binary += i['data']
+    print("paso for")
     model = pickle.loads(binary)
+    print("paso model")
     start = time.time()
     predict = model.predict(data)
     end_predict = time.time() - start
     response = predict.tolist()
     response.append(end_predict)
+    print(f'response {response}')
     return response
 
 
