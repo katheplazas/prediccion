@@ -1,65 +1,49 @@
-import time
 import json
 import pickle
+import time
+from threading import Thread
+
 import pandas as pd
 import py_eureka_client.eureka_client as eureka_client
 from flask import Flask, request, jsonify
 from flask_pymongo import PyMongo
 
+import prediction_service
+
 rest_port = 8061
-eureka_client.init(eureka_server="http://eureka:8761/eureka",
-                   app_name="prediccion",
-                   instance_port=rest_port)
 
 app = Flask(__name__)
-app.config["MONGO_URI"] = 'mongodb://root:123456@mongo:27018/prediccion?authSource=admin'
+# app.config["MONGO_URI"] = 'mongodb://root:123456@mongo:27018/prediccion?authSource=admin'
+app.config["MONGO_URI"] = 'mongodb://root:123456@localhost:27017/prediccion?authSource=admin'
 mongo = PyMongo(app)
 
 
 @app.route('/prueba', methods=["POST"])
 def prueba():
-    print("CONEXION ESTABLECIDA")
-    print(f'dato recibido: {request}')
-    return "Conexion "+str(request.data)
+    return "Conexion "
 
 
-@app.route('/model/dt', methods=["GET"])
 def predict_dt(data):
+    data = pd.read_json(data)
+    print(data.head())
+    # data = pre_processing(data)
 
-    if request.method == 'GET':
-        print(data)
-        if request.files:
-            print("here2")
-            data = request.files['data'].read()
-            print(type(data))
-            # type_ml = request.form['type_ml']
-            data = data.decode('utf8')
-            data = json.loads(data)
-            print(f'decode:{data}')
-            print(f'tipo{type(data)}')
-            data = pd.DataFrame.from_dict(data)
-            print(data.head())
-            # data = pre_processing(data)
-
-            file = mongo.db.fs.files.find_one({'filename': 'dt'})
-            binary = b""
-            s = mongo.db.fs.chunks.find({'files_id': file['_id']})
-            for i in s:
-                binary += i['data']
-            model = pickle.loads(binary)
-            start = time.time()
-            predict = model.predict(data)
-            end_predict = time.time() - start
-            response = predict.tolist()
-            response.append(end_predict)
-            return response
-        return "no request files"
-    return "no method GET"
+    file = mongo.db.fs.files.find_one({'filename': 'dt'})
+    binary = b""
+    s = mongo.db.fs.chunks.find({'files_id': file['_id']})
+    for i in s:
+        binary += i['data']
+    model = pickle.loads(binary)
+    start = time.time()
+    predict = model.predict(data)
+    end_predict = time.time() - start
+    response = predict.tolist()
+    response.append(end_predict)
+    return response
 
 
 @app.route('/model/lr', methods=["GET"])
 def predict_lr(data):
-
     if data is not None:
         print("here2")
         data = request.data
@@ -268,5 +252,7 @@ def not_post(error=None):
 
 
 if __name__ == "__main__":
+    t = Thread(target=prediction_service.start_service)
+    t.start()
     app.run(host='0.0.0.0', port=rest_port)
     # app.run(debug=True, port=rest_port)
