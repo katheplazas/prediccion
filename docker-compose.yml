@@ -1,0 +1,14 @@
+version: '3'
+services:
+  prediccion:
+    image: prediccion:v1
+    build: .
+    container_name: prediccion
+    restart: unless-stopped
+    ports:
+      - "6002:6002"
+    networks:
+      - deteccion-anomalias
+networks:
+  deteccion-anomalias:
+    external: true
