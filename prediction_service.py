@@ -27,5 +27,6 @@ def start_service():
             data = json.loads(msg.value())
             print(f'Tipo: {type(data)}')
             prediction = main.predict_dt(data)
+            print(f'Prediccion: {prediction}')
             prediction_producer.produce('data-prediction', value=json.dumps(prediction))
 

@@ -10,11 +10,11 @@ from flask_pymongo import PyMongo
 
 import prediction_service
 
-rest_port = 8061
+rest_port = 6002
 
 app = Flask(__name__)
 # app.config["MONGO_URI"] = 'mongodb://root:123456@mongo:27018/prediccion?authSource=admin'
-app.config["MONGO_URI"] = 'mongodb://root:123456@localhost:27018/prediccion?authSource=admin'
+app.config["MONGO_URI"] = 'mongodb://root:123456@mongo:27017/prediccion?authSource=admin'
 mongo = PyMongo(app)
 
 
