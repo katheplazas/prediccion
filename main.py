@@ -1,20 +1,18 @@
-import json
 import pickle
 import time
 from threading import Thread
 
 import pandas as pd
-import py_eureka_client.eureka_client as eureka_client
 from flask import Flask, request, jsonify
 from flask_pymongo import PyMongo
 
 import prediction_service
 
-rest_port = 6002
+rest_port = 8052
 
 app = Flask(__name__)
-# app.config["MONGO_URI"] = 'mongodb://root:123456@mongo:27018/prediccion?authSource=admin'
-app.config["MONGO_URI"] = 'mongodb://root:123456@mongo:27017/prediccion?authSource=admin'
+app.config["MONGO_URI"] = 'mongodb://root:123456@mongo:27018/prediccion?authSource=admin'
+# app.config["MONGO_URI"] = 'mongodb://root:123456@mongo:27017/prediccion?authSource=admin'
 mongo = PyMongo(app)
 
 
@@ -23,123 +21,26 @@ def prueba():
     return "Conexion "
 
 
-def predict_dt(data):
+def predict_attack(data):
     data = pd.DataFrame.from_dict(data)
-    print(data.head())
+    model_type = data.model[0]
+    data.drop(['model'], axis=1, inplace=True)
     # data = pre_processing(data)
-
-    file = mongo.db.fs.files.find_one({'filename': 'dt'})
-    print("paso file")
+    if model_type != 'dt' and model_type != 'lr' and model_type != 'rf' and model_type != 'svm-linear':
+        model_type = 'dt'
+    file = mongo.db.fs.files.find_one({'filename': model_type})  # model_type can be: dt, lr, rf, svm-linear
     binary = b""
     s = mongo.db.fs.chunks.find({'files_id': file['_id']})
     for i in s:
         binary += i['data']
-    print("paso for")
     model = pickle.loads(binary)
-    print("paso model")
     start = time.time()
     predict = model.predict(data)
     end_predict = time.time() - start
     response = predict.tolist()
     response.append(end_predict)
-    print(f'response {response}')
+    response.append(model_type)
     return response
-
-
-@app.route('/model/lr', methods=["GET"])
-def predict_lr(data):
-    if data is not None:
-        print("here2")
-        data = request.data
-        print(type(data))
-        # type_ml = request.form['type_ml']
-        data = data.decode('utf8')
-        data = json.loads(data)
-        print(f'decode:{data}')
-        print(f'tipo{type(data)}')
-        data = pd.DataFrame.from_dict(data)
-        print(data.head())
-        # data = pre_processing(data)
-
-        file = mongo.db.fs.files.find_one({'filename': 'lr'})
-        binary = b""
-        s = mongo.db.fs.chunks.find({'files_id': file['_id']})
-        for i in s:
-            binary += i['data']
-        model = pickle.loads(binary)
-        start = time.time()
-        predict = model.predict(data)
-        end_predict = time.time() - start
-        response = predict.tolist()
-        response.append(end_predict)
-        return response
-    return "no request files", 404
-
-
-@app.route('/model/rf', methods=["GET"])
-def predict_rf():
-    if request.method == 'GET':
-        print("here")
-        if request.files:
-            print("here2")
-            data = request.files['data'].read()
-            print(type(data))
-            # type_ml = request.form['type_ml']
-            data = data.decode('utf8')
-            data = json.loads(data)
-            print(f'decode:{data}')
-            print(f'tipo{type(data)}')
-            data = pd.DataFrame.from_dict(data)
-            print(data.head())
-            # data = pre_processing(data)
-
-            file = mongo.db.fs.files.find_one({'filename': 'rf'})
-            binary = b""
-            s = mongo.db.fs.chunks.find({'files_id': file['_id']})
-            for i in s:
-                binary += i['data']
-            model = pickle.loads(binary)
-            start = time.time()
-            predict = model.predict(data)
-            end_predict = time.time() - start
-            response = predict.tolist()
-            response.append(end_predict)
-            return response
-        return "no request files"
-    return "no method GET"
-
-
-@app.route('/model/svm-linear', methods=["GET"])
-def predict_svm_linear():
-    if request.method == 'GET':
-        print("here")
-        if request.files:
-            print("here2")
-            data = request.files['data'].read()
-            print(type(data))
-            # type_ml = request.form['type_ml']
-            data = data.decode('utf8')
-            data = json.loads(data)
-            print(f'decode:{data}')
-            print(f'tipo{type(data)}')
-            data = pd.DataFrame.from_dict(data)
-            print(data.head())
-            # data = pre_processing(data)
-
-            file = mongo.db.fs.files.find_one({'filename': 'svm-linear'})
-            binary = b""
-            s = mongo.db.fs.chunks.find({'files_id': file['_id']})
-            for i in s:
-                binary += i['data']
-            model = pickle.loads(binary)
-            start = time.time()
-            predict = model.predict(data)
-            end_predict = time.time() - start
-            response = predict.tolist()
-            response.append(end_predict)
-            return response
-        return "no request files"
-    return "no method GET"
 
 
 @app.route('/save/model/dt', methods=["POST"])

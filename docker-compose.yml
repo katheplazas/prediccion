@@ -6,7 +6,7 @@ services:
     container_name: prediccion
     restart: unless-stopped
     ports:
-      - "6002:6002"
+      - "8052:8052"
     networks:
       - deteccion-anomalias
 networks:

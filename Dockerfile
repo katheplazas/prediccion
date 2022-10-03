@@ -5,4 +5,4 @@ RUN pip install -r requirements.txt
 COPY . /prediccion
 VOLUME /tmp
 ENTRYPOINT ["python"]
-CMD ["main.py"]
+CMD ["-u","main.py"]

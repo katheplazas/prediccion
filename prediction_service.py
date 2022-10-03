@@ -19,14 +19,13 @@ def start_service():
     while True:
         msg = prediction_consumer.poll(0.1)
         if msg is None:
-            #print("wait...")
+            # print("wait...")
             pass
         elif msg.error():
             pass
         else:
             data = json.loads(msg.value())
             print(f'Tipo: {type(data)}')
-            prediction = main.predict_dt(data)
+            prediction = main.predict_attack(data)
             print(f'Prediccion: {prediction}')
             prediction_producer.produce('data-prediction', value=json.dumps(prediction))
-
