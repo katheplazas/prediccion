@@ -146,6 +146,9 @@ def save_argus(time):
         dict_time = {'time-argus': time}
         data_files = mongo.db.time_argus
         data_files.insert_one(dict_time)
+        return True
+    return False
+
 
 @app.errorhandler(404)
 def not_found(error=None):
