@@ -11,13 +11,13 @@ import py_eureka_client.eureka_client as eureka_client
 
 rest_port = 8052
 
-eureka_client.init(eureka_server="http://eureka:8761/eureka",
-                   app_name="prediccion-seguridad",
-                   instance_port=rest_port)
+# eureka_client.init(eureka_server="http://eureka:8761/eureka",
+#                   app_name="prediccion-seguridad",
+#                   instance_port=rest_port)
 
 app = Flask(__name__)
-app.config["MONGO_URI"] = 'mongodb://root:123456@mongo:27018/prediccion?authSource=admin'
-# app.config["MONGO_URI"] = 'mongodb://root:123456@mongo:27017/prediccion?authSource=admin'
+# app.config["MONGO_URI"] = 'mongodb://root:123456@mongo:27018/prediccion?authSource=admin'  ## Remoto
+app.config["MONGO_URI"] = 'mongodb://root:123456@mongo:27017/prediccion?authSource=admin'  ## Local
 mongo = PyMongo(app)
 
 
@@ -139,6 +139,13 @@ def save_svm_linear():
         return not_model
     return not_post
 
+
+@app.route('/save/time/argus/<time>', methods=['POST'])
+def save_argus(time):
+    if time is not None:
+        dict_time = {'time-argus': time}
+        data_files = mongo.db.time_argus
+        data_files.insert_many(dict_time)
 
 @app.errorhandler(404)
 def not_found(error=None):
