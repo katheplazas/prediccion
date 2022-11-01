@@ -11,13 +11,13 @@ import py_eureka_client.eureka_client as eureka_client
 
 rest_port = 8052
 
-'''eureka_client.init(eureka_server="http://eureka:8761/eureka",
+eureka_client.init(eureka_server="http://eureka:8761/eureka",
                    app_name="prediccion-seguridad",
-                   instance_port=rest_port)'''
+                   instance_port=rest_port)
 
 app = Flask(__name__)
-# app.config["MONGO_URI"] = 'mongodb://root:123456@mongo:27018/prediccion?authSource=admin'  ## Remoto
-app.config["MONGO_URI"] = 'mongodb://root:123456@mongo:27017/prediccion?authSource=admin'  ## Local
+app.config["MONGO_URI"] = 'mongodb://root:123456@mongo:27018/prediccion?authSource=admin'  ## Remoto
+# app.config["MONGO_URI"] = 'mongodb://root:123456@mongo:27017/prediccion?authSource=admin'  ## Local
 mongo = PyMongo(app)
 
 
