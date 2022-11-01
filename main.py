@@ -11,13 +11,13 @@ import py_eureka_client.eureka_client as eureka_client
 
 rest_port = 8052
 
-eureka_client.init(eureka_server="http://eureka:8761/eureka",
+'''eureka_client.init(eureka_server="http://eureka:8761/eureka",
                    app_name="prediccion-seguridad",
-                   instance_port=rest_port)
+                   instance_port=rest_port)'''
 
 app = Flask(__name__)
-app.config["MONGO_URI"] = 'mongodb://root:123456@mongo:27018/prediccion?authSource=admin'  ## Remoto
-# app.config["MONGO_URI"] = 'mongodb://root:123456@mongo:27017/prediccion?authSource=admin'  ## Local
+# app.config["MONGO_URI"] = 'mongodb://root:123456@mongo:27018/prediccion?authSource=admin'  ## Remoto
+app.config["MONGO_URI"] = 'mongodb://root:123456@mongo:27017/prediccion?authSource=admin'  ## Local
 mongo = PyMongo(app)
 
 
@@ -28,24 +28,23 @@ def prueba():
 
 def predict_attack(data):
     data = pd.DataFrame.from_dict(data)
-    model_type = data.model[0]
-    data.drop(['model'], axis=1, inplace=True)
+    list_response = []
+    models = ['dt', 'lr', 'rf', 'svm-linear']
     # data = pre_processing(data)
-    if model_type != 'dt' and model_type != 'lr' and model_type != 'rf' and model_type != 'svm-linear':
-        model_type = 'dt'
-    file = mongo.db.fs.files.find_one({'filename': model_type})  # model_type can be: dt, lr, rf, svm-linear
-    binary = b""
-    s = mongo.db.fs.chunks.find({'files_id': file['_id']})
-    for i in s:
-        binary += i['data']
-    model = pickle.loads(binary)
-    start = time.time()
-    predict = model.predict(data)
-    end_predict = time.time() - start
-    response = predict.tolist()
-    response.append(end_predict)
-    response.append(model_type)
-    return response
+    for i in models:
+        file = mongo.db.fs.files.find_one({'filename': i})  # model_type can be: dt, lr, rf, svm-linear
+        binary = b""
+        s = mongo.db.fs.chunks.find({'files_id': file['_id']})
+        for j in s:
+            binary += j['data']
+        model = pickle.loads(binary)
+        start = time.time()
+        predict = model.predict(data)
+        end_predict = time.time() - start
+        response = predict.tolist()
+        response.append(end_predict)
+        list_response.append(response)
+    return list_response
 
 
 @app.route('/save/model/dt', methods=["POST"])
